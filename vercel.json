@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}git add vercel.json
+git commit -m "Add Vercel SPA rewrite configuration"
+git push origin main

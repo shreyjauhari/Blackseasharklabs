@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Lock, FlaskConical, Mail, ArrowRight } from 'lucide-react';
 
@@ -9,6 +9,8 @@ import ParticleCanvas from '@/components/ParticleCanvas';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,8 +36,8 @@ export default function Login() {
 
     console.log('Login successful:', data);
 
-    // Redirect after successful login
-    window.location.href = '/admin';
+    // Redirect to admin dashboard using HashRouter
+    navigate('/admin', { replace: true });
   };
 
   return (

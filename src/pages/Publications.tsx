@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 import PageBanner from '@/components/PageBanner';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 
 type Publication = {
   id: string;

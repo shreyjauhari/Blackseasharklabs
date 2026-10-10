@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Plus, Trash2, X } from 'lucide-react';
 
 import { supabase } from '@/lib/supabaseClient';
@@ -13,6 +13,10 @@ type Publication = {
   area: string;
   abstract: string;
   tags: string[];
+  status: string | null;
+  pdf_url: string | null;
+  doi_url: string | null;
+  is_public: boolean;
 };
 
 const emptyForm = {
@@ -23,6 +27,10 @@ const emptyForm = {
   area: '',
   abstract: '',
   tags: '',
+  status: '',
+  pdf_url: '',
+  doi_url: '',
+  is_public: false,
 };
 
 export default function ManagePublications() {
@@ -31,9 +39,32 @@ export default function ManagePublications() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [divisionNames, setDivisionNames] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    loadPublications();
+    const init = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+
+      setCheckingAuth(false);
+      loadPublications();
+
+      const { data } = await supabase
+        .from('divisions')
+        .select('short_name')
+        .order('created_at', { ascending: true });
+      setDivisionNames((data ?? []).map((d: { short_name: string }) => d.short_name));
+    };
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadPublications = async () => {
@@ -68,6 +99,10 @@ export default function ManagePublications() {
       area: item.area,
       abstract: item.abstract,
       tags: item.tags?.join(', ') ?? '',
+      status: item.status ?? '',
+      pdf_url: item.pdf_url ?? '',
+      doi_url: item.doi_url ?? '',
+      is_public: item.is_public ?? false,
     });
 
     setShowForm(true);
@@ -93,6 +128,10 @@ export default function ManagePublications() {
         .split(',')
         .map((tag) => tag.trim())
         .filter(Boolean),
+      status: form.status || null,
+      pdf_url: form.pdf_url || null,
+      doi_url: form.doi_url || null,
+      is_public: form.is_public,
     };
 
     if (editingId) {
@@ -129,6 +168,14 @@ export default function ManagePublications() {
 
     await loadPublications();
   };
+
+  if (checkingAuth) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-base-black text-white">
+        Checking access...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-base-black text-white">
@@ -220,15 +267,19 @@ export default function ManagePublications() {
                 required
               />
 
-              <input
+              <select
                 className="input-dark"
-                placeholder="Research area e.g. AI"
                 value={form.area}
                 onChange={(e) =>
                   setForm({ ...form, area: e.target.value })
                 }
                 required
-              />
+              >
+                <option value="" className="bg-base-dark">Select division</option>
+                {[...divisionNames, ...(form.area && !divisionNames.includes(form.area) ? [form.area] : [])].map((n) => (
+                  <option key={n} value={n} className="bg-base-dark">{n}</option>
+                ))}
+              </select>
 
               <input
                 className="input-dark"
@@ -237,6 +288,42 @@ export default function ManagePublications() {
                 onChange={(e) =>
                   setForm({ ...form, tags: e.target.value })
                 }
+              />
+
+              <select
+                className="input-dark"
+                value={form.status}
+                onChange={(e) => setForm({ ...form, status: e.target.value })}
+              >
+                <option value="" className="bg-base-dark">Status (not set)</option>
+                <option value="published" className="bg-base-dark">Published</option>
+                <option value="preprint" className="bg-base-dark">Preprint</option>
+                <option value="ongoing" className="bg-base-dark">Ongoing research</option>
+              </select>
+
+              <label className="flex items-center gap-3 text-sm text-ink-secondary">
+                <input
+                  type="checkbox"
+                  checked={form.is_public}
+                  onChange={(e) => setForm({ ...form, is_public: e.target.checked })}
+                />
+                Approved for public release (visible on the website)
+              </label>
+
+              <input
+                className="input-dark"
+                type="url"
+                placeholder="Public PDF link (https://...) — optional"
+                value={form.pdf_url}
+                onChange={(e) => setForm({ ...form, pdf_url: e.target.value })}
+              />
+
+              <input
+                className="input-dark"
+                type="url"
+                placeholder="DOI / publisher link — optional"
+                value={form.doi_url}
+                onChange={(e) => setForm({ ...form, doi_url: e.target.value })}
               />
 
               <textarea
@@ -282,6 +369,9 @@ export default function ManagePublications() {
                   <div>
                     <span className="text-xs text-accent-cyan">
                       {item.area}
+                    </span>
+                    <span className="ml-3 text-xs text-ink-muted">
+                      {item.is_public ? 'Public' : 'Not public'}
                     </span>
 
                     <h2 className="mt-2 text-lg font-bold">

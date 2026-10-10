@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Brain, Atom, HeartPulse, CircuitBoard, Bot, Cpu, Users, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Brain, Users } from 'lucide-react';
 import PageBanner from '@/components/PageBanner';
 import { supabase } from '@/lib/supabaseClient';
+import { divisionSlug } from '@/lib/divisionSlug';
+import { divisionIconMap } from '@/lib/divisionIcons';
 
 interface Division {
   id: string;
@@ -16,10 +18,6 @@ interface Division {
   members: number;
   link: string | null;
 }
-
-const iconMap: Record<string, LucideIcon> = {
-  Brain, Atom, HeartPulse, CircuitBoard, Bot, Cpu,
-};
 
 const divisionGradients = [
   'from-accent-cyan/20 to-transparent',
@@ -60,7 +58,7 @@ export default function Research() {
       <PageBanner
         microLabel="RESEARCH DIVISIONS"
         title={<>Six divisions, one <span className="gradient-cyan">scientific agenda</span></>}
-        subtitle="From artificial intelligence to open silicon, our six research divisions share a single mission: advance the frontiers of science through open, reproducible research."
+        subtitle="From artificial intelligence to geopolitics, our six research divisions share a single mission: advance the frontiers of science through open, reproducible research."
       />
 
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -79,7 +77,7 @@ export default function Research() {
         {!loading && !error && (
           <div className="space-y-6">
             {divisions.map((division, idx) => {
-              const Icon = iconMap[division.icon] || Brain;
+              const Icon = divisionIconMap[division.icon] || Brain;
               const gradient = divisionGradients[idx % divisionGradients.length];
               return (
                 <div
@@ -135,7 +133,7 @@ export default function Research() {
                           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </a>
                       ) : (
-                        <Link to="/researchers" className="flex items-center gap-1.5 text-sm font-medium text-accent-cyan transition-colors hover:text-white">
+                        <Link to={`/research/${divisionSlug(division.short_name)}`} className="flex items-center gap-1.5 text-sm font-medium text-accent-cyan transition-colors hover:text-white">
                           Explore division
                           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>

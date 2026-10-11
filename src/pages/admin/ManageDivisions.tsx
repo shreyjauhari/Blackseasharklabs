@@ -23,7 +23,7 @@ type ResearcherOption = {
   name: string;
 };
 
-const iconOptions = ['Brain', 'Atom', 'HeartPulse', 'CircuitBoard', 'Bot', 'Cpu'];
+const iconOptions = ['Brain', 'Atom', 'HeartPulse', 'CircuitBoard', 'Bot', 'Cpu', 'Globe'];
 
 const emptyForm = {
   name: '',

@@ -4,7 +4,6 @@ import Layout from '@/components/Layout';
 
 import Home from '@/pages/Home';
 import Research from '@/pages/Research';
-import DivisionPage from '@/pages/DivisionPage';
 import Researchers from '@/pages/Researchers';
 import Publications from '@/pages/Publications';
 import Projects from '@/pages/Projects';
@@ -28,7 +27,6 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/research" element={<Research />} />
-          <Route path="/research/:slug" element={<DivisionPage />} />
           <Route path="/researchers" element={<Researchers />} />
           <Route path="/publications" element={<Publications />} />
           <Route path="/projects" element={<Projects />} />

@@ -1,54 +1,11 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Play, Brain } from 'lucide-react';
+import { ArrowRight, Play, Brain, Atom, HeartPulse, CircuitBoard, Bot, Cpu } from 'lucide-react';
 import ParticleCanvas from '@/components/ParticleCanvas';
-import { supabase } from '@/lib/supabaseClient';
-import { divisionSlug } from '@/lib/divisionSlug';
-import { divisionIconMap } from '@/lib/divisionIcons';
+import { divisions } from '@/data/divisions';
 
-interface HomeDivision {
-  id: string;
-  name: string;
-  short_name: string;
-  icon: string;
-  subtitle: string;
-  description: string;
-  tags: string[] | null;
-}
+const divisionIcons = [Brain, Atom, HeartPulse, CircuitBoard, Bot, Cpu];
 
 export default function Home() {
-  const [divisions, setDivisions] = useState<HomeDivision[]>([]);
-  const [divisionsState, setDivisionsState] = useState<'loading' | 'error' | 'ready'>('loading');
-  // Live counts from the database; null = not loaded (shown as an em dash).
-  const [counts, setCounts] = useState<{ researchers: number | null; divisions: number | null; publications: number | null }>({
-    researchers: null,
-    divisions: null,
-    publications: null,
-  });
-
-  useEffect(() => {
-    async function load() {
-      const [div, res, pub] = await Promise.all([
-        supabase.from('divisions').select('*').order('created_at', { ascending: true }),
-        supabase.from('researchers').select('id', { count: 'exact', head: true }),
-        supabase.from('publications').select('id', { count: 'exact', head: true }).eq('is_public', true),
-      ]);
-      if (div.error) {
-        console.error('Error fetching divisions:', div.error);
-        setDivisionsState('error');
-      } else {
-        setDivisions((div.data ?? []) as HomeDivision[]);
-        setDivisionsState('ready');
-      }
-      setCounts({
-        researchers: res.error ? null : res.count,
-        divisions: div.error ? null : (div.data ?? []).length,
-        publications: pub.error ? null : pub.count,
-      });
-    }
-    load();
-  }, []);
-
   return (
     <div>
       {/* Hero */}
@@ -70,8 +27,8 @@ export default function Home() {
           </h1>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink-secondary animate-fade-in-up" style={{ animationDelay: '0.15s', opacity: 0 }}>
             We are an independent research laboratory advancing the foundations of machine intelligence,
-            quantum science, medicine, neurotechnology, robotics, and geopolitics — with research
-            released openly once it has been approved for public release.
+            quantum science, medicine, neurotechnology, robotics, and open silicon — all published openly,
+            all reproducible, all for the public good.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s', opacity: 0 }}>
             <Link to="/research" className="btn-primary">
@@ -101,58 +58,48 @@ export default function Home() {
             </Link>
           </div>
 
-          {divisionsState === 'loading' && (
-            <p className="py-10 text-center text-ink-secondary">Loading divisions...</p>
-          )}
-          {divisionsState === 'error' && (
-            <p className="py-10 text-center text-ink-secondary">Divisions could not be loaded right now.</p>
-          )}
-          {divisionsState === 'ready' && divisions.length === 0 && (
-            <p className="py-10 text-center text-ink-secondary">No divisions have been added yet.</p>
-          )}
-          {divisionsState === 'ready' && divisions.length > 0 && (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {divisions.map((division) => {
-                const Icon = divisionIconMap[division.icon] || Brain;
-                return (
-                  <Link
-                    key={division.id}
-                    to={`/research/${divisionSlug(division.short_name)}`}
-                    className="glass-card group relative overflow-hidden p-6"
-                  >
-                    <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-accent-cyan/5 blur-2xl transition-opacity group-hover:opacity-100 opacity-0" />
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-base-border bg-base-dark/60">
-                      <Icon className="h-6 w-6 text-accent-cyan" />
-                    </div>
-                    <h3 className="mt-5 text-lg font-semibold text-white">{division.name}</h3>
-                    <p className="mt-1 text-sm text-ink-muted">{division.subtitle}</p>
-                    <p className="mt-3 text-sm leading-relaxed text-ink-secondary line-clamp-3">
-                      {division.description}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {(division.tags ?? []).slice(0, 3).map((tag) => (
-                        <span key={tag} className="pill pill-cyan">{tag}</span>
-                      ))}
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {divisions.map((division, idx) => {
+              const Icon = divisionIcons[idx];
+              return (
+                <Link
+                  key={division.id}
+                  to="/research"
+                  className="glass-card group relative overflow-hidden p-6"
+                >
+                  <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-accent-cyan/5 blur-2xl transition-opacity group-hover:opacity-100 opacity-0" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-base-border bg-base-dark/60">
+                    <Icon className="h-6 w-6 text-accent-cyan" />
+                  </div>
+                  <h3 className="mt-5 text-lg font-semibold text-white">{division.name}</h3>
+                  <p className="mt-1 text-sm text-ink-muted">{division.subtitle}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-ink-secondary line-clamp-3">
+                    {division.description}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {division.tags.slice(0, 3).map((tag) => (
+                      <span key={tag} className="pill pill-cyan">{tag}</span>
+                    ))}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* Stats strip */}
       <section className="relative border-t border-base-border py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
             {[
-              { value: counts.researchers, label: 'Researchers' },
-              { value: counts.divisions, label: 'Research divisions' },
-              { value: counts.publications, label: 'Public publications' },
+              { value: '129', label: 'Researchers & engineers' },
+              { value: '6', label: 'Research divisions' },
+              { value: '84', label: 'Open publications' },
+              { value: '12', label: 'Open-source projects' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
-                <p className="text-4xl font-bold gradient-cyan lg:text-5xl">{stat.value ?? '—'}</p>
+                <p className="text-4xl font-bold gradient-cyan lg:text-5xl">{stat.value}</p>
                 <p className="mt-2 text-sm text-ink-secondary">{stat.label}</p>
               </div>
             ))}
@@ -167,8 +114,8 @@ export default function Home() {
             Open science, reproducible results, responsible release
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-ink-secondary">
-            Research that has been approved for public release is available openly, without paywalls.
-            Science moves forward when everyone can build on it.
+            Everything we publish — papers, models, datasets, chips, and code — is released openly.
+            No paywalls, no gated APIs, no proprietary lock-in. Science moves forward when everyone can build on it.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link to="/publications" className="btn-primary">

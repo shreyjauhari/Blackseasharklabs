@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { FlaskConical } from 'lucide-react';
-import { divisionSlug } from '@/lib/divisionSlug';
 
-const researchLinks = ['AI', 'Quantum', 'Medical', 'Neuro / BCI', 'Robotics', 'Geopolitics'];
+const researchLinks = ['AI', 'Quantum', 'Medical', 'Neuro / BCI', 'Robotics', 'Chip'];
 const resourceLinks = [
   { label: 'Publications', to: '/publications' },
+  { label: 'Datasets', to: '/datasets' },
   { label: 'Projects', to: '/projects' },
   { label: 'News', to: '/news' },
 ];
@@ -41,7 +41,7 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {researchLinks.map((label) => (
                 <li key={label}>
-                  <Link to={`/research/${divisionSlug(label)}`} className="text-sm text-ink-secondary transition-colors hover:text-accent-cyan">
+                  <Link to="/research" className="text-sm text-ink-secondary transition-colors hover:text-accent-cyan">
                     {label}
                   </Link>
                 </li>

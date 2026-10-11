@@ -33,7 +33,7 @@ const areas = [
   'Medical',
   'Neuro / BCI',
   'Robotics',
-  'Geopolitics',
+  'Chip',
 ];
 
 const sortOptions = ['Newest first', 'Oldest first'];
@@ -76,10 +76,10 @@ function getArea(pub: Publication): string {
   }
 
   if (
-    title.includes('geopolit') ||
-    title.includes('international relations')
+    title.includes('chip') ||
+    title.includes('semiconductor')
   ) {
-    return 'Geopolitics';
+    return 'Chip';
   }
 
   if (
@@ -136,8 +136,7 @@ export default function Publications() {
 
       const { data, error } = await supabase
         .from('publications')
-        .select('*')
-        .eq('is_public', true);
+        .select('*');
 
       if (error) {
         console.error('Supabase publications error:', error);
@@ -228,7 +227,7 @@ export default function Publications() {
             </span>
           </>
         }
-        subtitle="Research approved for public release by BlackSeaShark5_Labs."
+        subtitle="Every paper, every dataset, every model — released under permissive open licenses for the global research community."
       />
 
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">

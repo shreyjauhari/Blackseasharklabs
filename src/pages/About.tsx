@@ -6,12 +6,12 @@ const values = [
   {
     icon: BookOpen,
     title: 'Open Science',
-    description: 'We aim to release our approved research openly, without paywalls or gated access.',
+    description: 'Every paper, dataset, model, and chip we produce is released under permissive open licenses. No paywalls, no gated APIs.',
   },
   {
     icon: FlaskConical,
     title: 'Reproducible Results',
-    description: 'We aim to share the methods, data, and code behind our published work so that other researchers can verify and build on it.',
+    description: 'We publish full training checkpoints, evaluation code, and hardware designs so any researcher can verify and build on our work.',
   },
   {
     icon: Heart,
@@ -21,13 +21,15 @@ const values = [
   {
     icon: Globe,
     title: 'Global Collaboration',
-    description: 'We aim to collaborate with universities, hospitals, and institutions to translate open research into real-world outcomes.',
+    description: 'We partner with universities, hospitals, and institutions worldwide to translate open research into real-world outcomes.',
   },
 ];
 
 const milestones = [
   { year: '2026', event: 'Founded as an independent research laboratory' },
-  { year: '2026', event: 'Six divisions established across AI, Quantum, Medical, Neuro/BCI, Robotics, and Geopolitics' },
+  { year: '2026', event: 'Six divisions established across AI, Quantum, Medical, Neuro/BCI, Robotics, and Chip' },
+  { year: '2026', event: 'First open publications released at NEURIPS, Nature, and ICRA' },
+  { year: '2026', event: '129 researchers, engineers, and clinicians onboarded' },
 ];
 
 export default function About() {
@@ -49,8 +51,8 @@ export default function About() {
           <p className="mt-6 text-lg leading-relaxed text-ink-secondary">
             We believe scientific progress accelerates when knowledge is shared freely. Our laboratory
             pursues ambitious research across six frontiers — from artificial intelligence and quantum
-            computing to medicine, neurotechnology, robotics, and geopolitics — and aims to release
-            its approved research openly.
+            computing to medicine, neurotechnology, robotics, and open silicon — and releases everything
+            openly: papers, models, datasets, chip designs, and code.
           </p>
           <p className="mt-4 text-lg leading-relaxed text-ink-secondary">
             We are not a company building products behind closed doors. We are a research institution

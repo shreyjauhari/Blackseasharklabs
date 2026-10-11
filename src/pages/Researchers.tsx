@@ -51,7 +51,7 @@ export default function Researchers() {
       <PageBanner
         microLabel="OUR PEOPLE"
         title={<>The people behind the <span className="gradient-cyan">research</span></>}
-        subtitle="The researchers and engineers working across our research divisions."
+        subtitle="129 researchers, engineers and clinicians working across six divisions."
       />
 
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
